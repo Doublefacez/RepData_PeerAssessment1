@@ -1,5 +1,7 @@
 # Week 2 Peer review assessment
 library(dplyr)
+library(lubridate)
+library(ggplot2)
 
 getwd()
 setwd("C:/Users/lamti/Desktop/datasciencecoursera/Course 5 Reproducible Research/Week 2/peer review assessment/RepData_PeerAssessment1")
@@ -60,19 +62,73 @@ miss
 
 #Question 7 filling in all missing values
 
-fill_na <- data %>% 
+data_fill <- data %>% 
             mutate(steps = case_when(is.na(steps) ~ tidy$steps[match(
               data$interval, tidy$interval)], TRUE ~ as.numeric(steps)
             ))
 
-fill_na
+data_fill
 
 
 
 #Question 7 
 
+data_fill_sum <- data_fill%>%
+                group_by(date)%>%
+                  summarise(sum = sum(steps))
+data_fill_sum
+
+
+hist(data_fill_sum$sum, xlab = "Total number of steps each day", 
+     main = "Historgram of total number of steps each day", breaks = 10)
+
+
+mean_fill_step <- mean(data_fill_sum$sum, na.rm = TRUE)
+median_fill_step <- median(data_fill_sum$sum, na.rm = TRUE)
+
+mean_dif <- mean_fill_step - mean_t_step
+mean_dif
+median_dif <- median_fill_step - median_t_step
+median_dif
+
+#Both estimates on the mean and median of the total number of steps taken per day
+#are higher than that of the first part of the assignment. 
+
+#The number of mean and median total increased after imputing missing data on the estimates of the total daily number of steps
 
 
 
 
+#Part 4 Are there differences in activity patterns between weekdays and weekends?
 
+
+data_fill_date <- data_fill
+data_fill_date$date <- wday(ymd(data_fill_date$date))
+
+
+
+
+day <- data_fill_date %>% 
+          mutate(date = ymd(date),
+                  day = case_when(wday(date)%in% 2:6 ~ "Weekday", 
+                                  wday(date) %in% c(1,7) ~ "Weekend")
+          )
+
+colnames(day)
+mean_by_day <- day%>% 
+                  group_by(interval, day)%>%
+                    summarise(steps = mean(steps))
+mean_by_day
+
+ggplot(mean_by_day, aes(x = interval, y = steps))+
+  labs(x = "Time (5 mins intervals)", y = "Average number of steps",
+       title = "Average number of steps every 5 mins on weekday and weekend")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_wrap(~day, nrow = 2)+
+  geom_line()
+
+
+
+
+    
+    
