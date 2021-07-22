@@ -2,6 +2,7 @@
 library(dplyr)
 library(lubridate)
 library(ggplot2)
+library(knitr)
 
 getwd()
 setwd("C:/Users/lamti/Desktop/datasciencecoursera/Course 5 Reproducible Research/Week 2/peer review assessment/RepData_PeerAssessment1")
@@ -103,8 +104,6 @@ median_dif
 
 
 data_fill_date <- data_fill
-data_fill_date$date <- wday(ymd(data_fill_date$date))
-
 
 
 
